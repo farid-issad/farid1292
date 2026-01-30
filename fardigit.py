@@ -1,12 +1,13 @@
 import PyPDF2
 import os
 
-def lire_pdf(chemin_fichier):
+def lire_pdf(chemin_fichier, verbose=False):
     """
     Lit un document PDF et retourne son contenu texte.
     
     Args:
         chemin_fichier (str): Le chemin vers le fichier PDF
+        verbose (bool): Si True, affiche des informations sur le traitement
         
     Returns:
         str: Le contenu texte du PDF
@@ -22,16 +23,17 @@ def lire_pdf(chemin_fichier):
             
             # Obtenir le nombre de pages
             nombre_pages = len(lecteur_pdf.pages)
-            print(f"Le PDF contient {nombre_pages} page(s)")
+            if verbose:
+                print(f"Le PDF contient {nombre_pages} page(s)")
             
             # Extraire le texte de toutes les pages
-            texte_complet = ""
+            texte_parts = []
             for numero_page in range(nombre_pages):
                 page = lecteur_pdf.pages[numero_page]
-                texte_complet += f"\n--- Page {numero_page + 1} ---\n"
-                texte_complet += page.extract_text()
+                texte_parts.append(f"\n--- Page {numero_page + 1} ---\n")
+                texte_parts.append(page.extract_text())
             
-            return texte_complet
+            return ''.join(texte_parts)
             
     except Exception as e:
         return f"Erreur lors de la lecture du PDF: {str(e)}"
@@ -49,7 +51,7 @@ if __name__ == "__main__":
     fichier_exemple = "exemple.pdf"
     if os.path.exists(fichier_exemple):
         print(f"\nLecture du fichier {fichier_exemple}:")
-        contenu = lire_pdf(fichier_exemple)
+        contenu = lire_pdf(fichier_exemple, verbose=True)
         print(contenu)
     else:
         print(f"\nPour tester, créez un fichier PDF nommé '{fichier_exemple}' dans ce répertoire.")
